@@ -1,31 +1,16 @@
+import { useLoginPageStyles } from "../styles";
+import Layout from "../components/shared/Layout";
+import React from "react";
 import {
-  Button,
   Card,
   CardHeader,
   TextField,
+  Button,
   Typography,
 } from "@material-ui/core";
-import React from "react";
+import FacebookBlueIcon from "../images/facebook-icon-blue.svg";
+import FacebookWhiteIcon from "../images/facebook-icon-white.png";
 import { Link } from "react-router-dom";
-import { useLoginPageStyles } from "../styles";
-import FacebookBlue from "../images/facebook-icon-blue.svg";
-import FacebookWhite from "../images/facebook-icon-white.png";
-
-export function LoginWithFacebook({ color, iconColor, variant }) {
-  const classes = useLoginPageStyles();
-  const facebookIcon = iconColor === "blue" ? FacebookBlue : FacebookWhite;
-
-  return (
-    <Button fullWidth color={color} variant={variant}>
-      <img
-        src={facebookIcon}
-        alt="Facebook Icon"
-        className={classes.facebookIcon}
-      />
-      Login With Facebook
-    </Button>
-  );
-}
 
 function LoginPage() {
   const classes = useLoginPageStyles();
@@ -33,9 +18,9 @@ function LoginPage() {
   return (
     <>
       <section className={classes.section}>
-        <article>
+        <article className={classes.article}>
           <Card className={classes.card}>
-            <CardHeader className={classes.cardHeader} />
+            <CardHeader className={classes.cardHeader}> </CardHeader>
             <form>
               <TextField
                 variant="filled"
@@ -44,6 +29,7 @@ function LoginPage() {
                 margin="dense"
                 className={classes.textField}
                 autoComplete="username"
+                type="text"
               />
               <TextField
                 variant="filled"
@@ -52,6 +38,7 @@ function LoginPage() {
                 margin="dense"
                 className={classes.textField}
                 autoComplete="current-password"
+                type="password"
               />
               <Button
                 variant="contained"
@@ -64,13 +51,13 @@ function LoginPage() {
               </Button>
             </form>
             <div className={classes.orContainer}>
-              <div className={classes.orLine} />
+              <div className={classes.orLine}></div>
               <div>
                 <Typography variant="body2" color="textSecondary">
                   OR
                 </Typography>
-                <div className={classes.orLine} />
               </div>
+              <div className={classes.orLine}></div>
             </div>
             <LoginWithFacebook color="secondary" iconColor="blue" />
             <Button color="secondary" fullWidth>
@@ -79,17 +66,34 @@ function LoginPage() {
           </Card>
           <Card className={classes.signUpCard}>
             <Typography align="right" variant="body2">
-              Don't have an acount?
+              Don't have an Account?
             </Typography>
-            <Link to="/accounts/emailsignup">
+            <Link to="/accounts/email/signup">
               <Button color="primary" className={classes.signUpButton}>
-                Sign Up
+                {" "}
+                Sign up
               </Button>
             </Link>
           </Card>
         </article>
       </section>
     </>
+  );
+}
+
+export function LoginWithFacebook({ color, iconColor, variant }) {
+  const classes = useLoginPageStyles();
+  const FacebookIcon =
+    iconColor === "blue" ? FacebookBlueIcon : FacebookWhiteIcon;
+  return (
+    <Button fullWidth color={color} variant={variant}>
+      <img
+        src={FacebookIcon}
+        alt="Facebook Icon"
+        className={classes.facebookIcon}
+      />
+      Login With Facebook
+    </Button>
   );
 }
 
