@@ -1,8 +1,8 @@
 import React from "react";
-import Layout from "../components/shared/Layout";
 import { useFeedPageStyles } from "../styles";
-import { getDefaultPost } from "../data";
+import Layout from "../components/shared/Layout";
 import FeedPost from "../components/feed/FeedPost";
+import { defaultPost, getDefaultPost } from "../data";
 import { Hidden } from "@material-ui/core";
 import UserCard from "../components/shared/UserCard";
 import FeedSideSuggestions from "../components/feed/FeedSideSuggestions";
