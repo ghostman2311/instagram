@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import { useNavbarStyles } from "../../styles";
-import { AppBar, Hidden, InputBase } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Avatar, AppBar, Hidden, InputBase } from "@material-ui/core";
+import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logo.png";
-import { LoadingIcon } from "../../icons";
+import {
+  LoadingIcon,
+  AddIcon,
+  LikeIcon,
+  LikeActiveIcon,
+  ExploreIcon,
+  ExploreActiveIcon,
+  HomeIcon,
+  HomeActiveIcon,
+} from "../../icons";
+import { defaultCurrentUser } from "../../data";
 
 function Logo() {
   const classes = useNavbarStyles();
@@ -42,11 +52,44 @@ function Search() {
   );
 }
 
-function Links() {
-  return <>Links</>;
+function Links({ path }) {
+  const [showList, setShowList] = useState(false);
+  const classes = useNavbarStyles();
+  return (
+    <div className={classes.linksContainer}>
+      <div className={classes.linksWrapper}>
+        <Hidden xsDown>
+          <AddIcon />
+        </Hidden>
+        <Link to="/">{path === "/" ? <HomeActiveIcon /> : <HomeIcon />}</Link>
+        <Link to="/explore">
+          {path === "/explore" ? <ExploreActiveIcon /> : <ExploreIcon />}
+        </Link>
+        <div
+          className={classes.notifications}
+          onClick={() => setShowList((prev) => !prev)}
+        >
+          {showList ? <LikeActiveIcon /> : <LikeIcon />}
+        </div>
+        <Link to={`/${defaultCurrentUser.username}`}>
+          <div
+            className={
+              path === defaultCurrentUser.username ? classes.profileActive : ""
+            }
+          />
+          <Avatar
+            src={defaultCurrentUser.profile_image}
+            className={classes.profileImage}
+          />
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 function Navbar({ minimalNavbar }) {
+  const history = useHistory();
+  const path = history.location.pathname;
   const classes = useNavbarStyles();
 
   return (
@@ -56,7 +99,7 @@ function Navbar({ minimalNavbar }) {
         {!minimalNavbar && (
           <>
             <Search />
-            <Links />
+            <Links path={path} />
           </>
         )}
       </section>
