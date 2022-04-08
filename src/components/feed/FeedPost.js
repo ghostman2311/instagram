@@ -3,6 +3,7 @@ import { useFeedPostStyles } from "../../styles";
 import UserCard from "../shared/UserCard";
 import {
   MoreIcon,
+  UnlikeIcon,
   LikeIcon,
   CommentIcon,
   ShareIcon,
@@ -14,7 +15,13 @@ import HTMLEllipsis from "react-lines-ellipsis/lib/html";
 import { Hidden, Divider } from "@material-ui/core";
 
 function LikeButton() {
-  return <LikeIcon />;
+  const [liked, setLiked] = useState(false);
+  const classes = useFeedPostStyles();
+  const Icon = liked ? UnlikeIcon : LikeIcon;
+  const className = liked ? classes.like : classes.liked;
+  return (
+    <Icon className={className} onClick={() => setLiked((prev) => !prev)} />
+  );
 }
 
 function SaveButton() {
