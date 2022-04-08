@@ -8,11 +8,12 @@ import {
   CommentIcon,
   ShareIcon,
   SaveIcon,
+  RemoveIcon,
 } from "../../icons";
 import { Link } from "react-router-dom";
 import { Typography, Button } from "@material-ui/core";
 import HTMLEllipsis from "react-lines-ellipsis/lib/html";
-import { Hidden, Divider } from "@material-ui/core";
+import { Hidden, Divider, TextField } from "@material-ui/core";
 
 function LikeButton() {
   const [liked, setLiked] = useState(false);
@@ -25,6 +26,15 @@ function LikeButton() {
 }
 
 function SaveButton() {
+  const classes = useFeedPostStyles();
+  const [saved, setSaved] = useState(false);
+  const Icon = saved ? RemoveIcon : SaveIcon;
+  return (
+    <Icon
+      className={classes.saveIcon}
+      onClick={() => setSaved((prev) => !prev)}
+    />
+  );
   return <SaveIcon />;
 }
 
@@ -128,7 +138,28 @@ function FeedPost({ post }) {
 }
 
 function Comment() {
-  return "comment";
+  const classes = useFeedPostStyles();
+  const [content, setContent] = useState("");
+  return (
+    <div className={classes.commentContainer}>
+      <TextField
+        className={classes.textField}
+        fullWidth
+        value={content}
+        placeholder="Add a Comment..."
+        multiline
+        rowMax={2}
+        row={1}
+        onChange={(e) => setContent(e.target.value)}
+        InputProps={{
+          classes: {
+            root: classes.root,
+            underline: classes.underline,
+          },
+        }}
+      />
+    </div>
+  );
 }
 
 export default FeedPost;

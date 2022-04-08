@@ -10,8 +10,9 @@ function UserCard({
       "https://reedbarger.nyc3.digitaloceanspaces.com/reactbootcamp/avatar.png",
     name: "Nikhil",
   },
+  avatarSize = 44,
 }) {
-  const classes = useUserCardStyles();
+  const classes = useUserCardStyles({ avatarSize });
 
   const { username, profile_image, name } = user;
   console.log(user);
