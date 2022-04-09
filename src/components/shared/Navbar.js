@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavbarStyles, WhiteTooltip } from "../../styles";
+import { useNavbarStyles, WhiteTooltip, RedTooltip } from "../../styles";
 import {
   Avatar,
   AppBar,
@@ -21,6 +21,7 @@ import {
   HomeActiveIcon,
 } from "../../icons";
 import { defaultCurrentUser, getDefaultUser } from "../../data";
+import NotificationTooltip from "../notification/NotificationTooltip";
 
 function Logo() {
   const classes = useNavbarStyles();
@@ -110,7 +111,19 @@ function Search({ history }) {
 
 function Links({ path }) {
   const [showList, setShowList] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
   const classes = useNavbarStyles();
+
+  useEffect(() => {
+    const timeout = setTimeout(handleHideTooltip, 5000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  });
+
+  const handleHideTooltip = () => {
+    setShowTooltip(false);
+  };
   return (
     <div className={classes.linksContainer}>
       <div className={classes.linksWrapper}>
@@ -121,12 +134,20 @@ function Links({ path }) {
         <Link to="/explore">
           {path === "/explore" ? <ExploreActiveIcon /> : <ExploreIcon />}
         </Link>
-        <div
-          className={classes.notifications}
-          onClick={() => setShowList((prev) => !prev)}
+        <RedTooltip
+          arrow
+          open={showTooltip}
+          onOpen={handleHideTooltip}
+          TransitionComponent="Zoom"
+          title={<NotificationTooltip />}
         >
-          {showList ? <LikeActiveIcon /> : <LikeIcon />}
-        </div>
+          <div
+            className={classes.notifications}
+            onClick={() => setShowList((prev) => !prev)}
+          >
+            {showList ? <LikeActiveIcon /> : <LikeIcon />}
+          </div>
+        </RedTooltip>
         <Link to={`/${defaultCurrentUser.username}`}>
           <div
             className={
