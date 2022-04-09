@@ -22,6 +22,8 @@ import {
 } from "../../icons";
 import { defaultCurrentUser, getDefaultUser } from "../../data";
 import NotificationTooltip from "../notification/NotificationTooltip";
+import NotificationList from "../notification/NotificationList";
+import { useNProgress } from "@tanem/react-nprogress";
 
 function Logo() {
   const classes = useNavbarStyles();
@@ -111,7 +113,7 @@ function Search({ history }) {
 
 function Links({ path }) {
   const [showList, setShowList] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(true);
+  const [showTooltip, setShowTooltip] = useState(false);
   const classes = useNavbarStyles();
 
   useEffect(() => {
@@ -121,11 +123,16 @@ function Links({ path }) {
     };
   });
 
+  const handleHideList = () => {
+    setShowList(false);
+  };
+
   const handleHideTooltip = () => {
     setShowTooltip(false);
   };
   return (
     <div className={classes.linksContainer}>
+      {showList && <NotificationList handleHideList={handleHideList} />}
       <div className={classes.linksWrapper}>
         <Hidden xsDown>
           <AddIcon />
@@ -164,23 +171,58 @@ function Links({ path }) {
   );
 }
 
+function Progress({ isAnimating }) {
+  const classes = useNavbarStyles();
+  const { animationDuration, isFinished, progress } = useNProgress({
+    isAnimating,
+  });
+  return (
+    <div
+      className={classes.progressContainer}
+      style={{
+        opacity: isFinished ? 0 : 1,
+        transition: `opacity ${animationDuration}ms linear`,
+      }}
+    >
+      <div
+        className={classes.progressBar}
+        style={{
+          marginLeft: `${(-1 + progress) * 100}%`,
+          transition: `margin-left ${animationDuration}ms linear`,
+        }}
+      >
+        <div className={classes.progressBackground} />
+      </div>
+    </div>
+  );
+}
+
 function Navbar({ minimalNavbar }) {
   const history = useHistory();
   const path = history.location.pathname;
+  const [isLoadingPage, setIsLoadingPage] = useState(true);
   const classes = useNavbarStyles();
 
+  useEffect(() => {
+    // setTimeout(() => setIsLoadingPage(false), 10000);
+    setIsLoadingPage(false);
+  }, [path]);
+
   return (
-    <AppBar className={classes.appBar}>
-      <section className={classes.section}>
-        <Logo />
-        {!minimalNavbar && (
-          <>
-            <Search history={history} />
-            <Links path={path} />
-          </>
-        )}
-      </section>
-    </AppBar>
+    <>
+      <Progress isAnimating={isLoadingPage} />
+      <AppBar className={classes.appBar}>
+        <section className={classes.section}>
+          <Logo />
+          {!minimalNavbar && (
+            <>
+              <Search history={history} />
+              <Links path={path} />
+            </>
+          )}
+        </section>
+      </AppBar>
+    </>
   );
 }
 

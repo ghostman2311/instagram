@@ -1,10 +1,57 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNotificationListStyles } from "../../styles";
+import { defaultNotifications } from "../../data";
+import { Grid, Avatar, Typography } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import FollowButton from "../shared/FollowButton";
+import useOutsideClick from "@rooks/use-outside-click";
 
-function NotificationList() {
-  useNotificationListStyles();
+function NotificationList({ handleHideList }) {
+  const classes = useNotificationListStyles();
 
-  return <div>NotificationList</div>;
+  const listContainerRef = useRef();
+  useOutsideClick(listContainerRef, handleHideList);
+
+  return (
+    <Grid ref={listContainerRef} className={classes.listContainer} container>
+      {defaultNotifications.map((notification) => {
+        const isLike = notification.type === "like";
+        const isFollow = notification.type === "follow";
+        return (
+          <Grid key={notification.id} item clssName={classes.listItem}>
+            <div className={classes.listItemWrapper}>
+              <div className={classes.avatarWrapper}>
+                <Avatar src={notification.user.profile_image} />
+              </div>
+              <div className={classes.nameWrapper}>
+                <Link to={`/${notification.user.username}`}>
+                  <Typography variant="body1">
+                    {notification.user.username}
+                  </Typography>
+                </Link>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  className={classes.typography}
+                >
+                  {isLike && "likes your photo. 4d"}
+                  {isFollow && "started following you. 5d"}
+                </Typography>
+              </div>
+            </div>
+            <div>
+              {isLike && (
+                <Link to={`/p/${notification.post.id}`}>
+                  <Avatar src={notification.post.media} alt="User Post" />
+                </Link>
+              )}
+              {isFollow && <FollowButton />}
+            </div>
+          </Grid>
+        );
+      })}
+    </Grid>
+  );
 }
 
 export default NotificationList;
