@@ -1,6 +1,13 @@
-import React, { useState } from "react";
-import { useNavbarStyles } from "../../styles";
-import { Avatar, AppBar, Hidden, InputBase } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { useNavbarStyles, WhiteTooltip } from "../../styles";
+import {
+  Avatar,
+  AppBar,
+  Hidden,
+  InputBase,
+  Grid,
+  Typography,
+} from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logo.png";
 import {
@@ -13,7 +20,7 @@ import {
   HomeIcon,
   HomeActiveIcon,
 } from "../../icons";
-import { defaultCurrentUser } from "../../data";
+import { defaultCurrentUser, getDefaultUser } from "../../data";
 
 function Logo() {
   const classes = useNavbarStyles();
@@ -28,26 +35,75 @@ function Logo() {
   );
 }
 
-function Search() {
+function Search({ history }) {
+  const [results, setResults] = useState([]);
   const [query, setQuery] = useState("");
   let loading = false;
   const classes = useNavbarStyles();
+
+  const hasResults = Boolean(query) && results.length > 0;
+
+  useEffect(() => {
+    if (!query.trim()) {
+      return;
+    }
+    setResults(Array.from({ length: 5 }, () => getDefaultUser()));
+  }, [query]);
   return (
     <Hidden xsDown>
-      <InputBase
-        className={classes.input}
-        startAdornment={<span className={classes.searchIcon} />}
-        endAdornment={
-          loading ? (
-            <LoadingIcon />
-          ) : (
-            <span className={classes.clearIcon} onClick={() => setQuery("")} />
+      <WhiteTooltip
+        arrow
+        interactive
+        TransitionComponent="Fade"
+        open={hasResults}
+        title={
+          hasResults && (
+            <Grid className={classes.resultContainer} container>
+              {results.map((result) => (
+                <Grid
+                  className={classes.resultLink}
+                  key={result.id}
+                  item
+                  onClick={() => {
+                    history.push(`/${result.username}`);
+                    setQuery("");
+                  }}
+                >
+                  <div className={classes.resultWrapper}>
+                    <div className={classes.avatarWrapper}>
+                      <Avatar src={result.profile_image} />
+                    </div>
+                    <div className={classes.nameWrapper}>
+                      <Typography varaint="body1">{result.username}</Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {result.name}
+                      </Typography>
+                    </div>
+                  </div>
+                </Grid>
+              ))}
+            </Grid>
           )
         }
-        placeholder="Search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+      >
+        <InputBase
+          className={classes.input}
+          startAdornment={<span className={classes.searchIcon} />}
+          endAdornment={
+            loading ? (
+              <LoadingIcon />
+            ) : (
+              <span
+                className={classes.clearIcon}
+                onClick={() => setQuery("")}
+              />
+            )
+          }
+          placeholder="Search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </WhiteTooltip>
     </Hidden>
   );
 }
@@ -98,7 +154,7 @@ function Navbar({ minimalNavbar }) {
         <Logo />
         {!minimalNavbar && (
           <>
-            <Search />
+            <Search history={history} />
             <Links path={path} />
           </>
         )}
